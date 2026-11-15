@@ -1,0 +1,60 @@
+[
+  {
+    "name": "dk_law_search",
+    "description": "Search Danish national legislation (Retsinformation) by title word or popular name, e.g. \"databeskyttelsesloven\" or \"straffeloven\" (Danish). By default searches acts (love) and consolidated acts (lovbekendtgoerelser) and returns only those in force; set document_type to \"executive_order\" for bekendtgoerelser, \"act\" or \"consolidated_act\" for one kind, and in_force_only=false for historic ones. Returns id (ELI path such as \"lta/2024/289\"), citation, title, popular name, type, ministry, status, title_match (the words appear in the title; later hits are text matches) and a link; 10 per page, use page to continue. Pair with dk_law_get for the text.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Word(s) from the Danish title or popular name, e.g. \"databeskyttelsesloven\""
+        },
+        "document_type": {
+          "type": "string",
+          "enum": [
+            "law",
+            "act",
+            "consolidated_act",
+            "executive_order"
+          ],
+          "description": "law (acts and consolidated acts, default), act, consolidated_act or executive_order"
+        },
+        "in_force_only": {
+          "type": "boolean",
+          "description": "Only documents in force today (default true)"
+        },
+        "page": {
+          "type": "number",
+          "description": "Page number, 1-based (default 1)"
+        }
+      },
+      "required": [
+        "query"
+      ]
+    }
+  },
+  {
+    "name": "dk_law_get",
+    "description": "Fetch one Danish legal document by id from dk_law_search (an ELI path such as \"lta/2024/289\" for the current Data Protection Act consolidated act). Returns title, popular name, type, citation, ministry, publication, status (valid or historic), validity date and the text. Pass section (e.g. \"6\" or \"10 a\" for § 10 a) for one section only; without it the text is capped at max_chars with a contents list. Text is in Danish exactly as Retsinformation publishes it.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "ELI path from dk_law_search, e.g. \"lta/2024/289\""
+        },
+        "section": {
+          "type": "string",
+          "description": "Section (paragraf) number, e.g. \"6\" or \"10 a\""
+        },
+        "max_chars": {
+          "type": "number",
+          "description": "Cap on returned text when no section is given (default 20000, max 100000)"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    }
+  }
+]
